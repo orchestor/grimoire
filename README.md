@@ -2,6 +2,8 @@
 
 This is a project I have been working on in private for a couple of months, but I cleaned out my .git folder as it had some private notes in there. 
 
+![screenshot](Screenshot (3).png)
+
 ## NOTE: This is a work in progress. 
 
 ## NOTE: this is meant to be run locally, not over the interweb (at least without some additional security).  
