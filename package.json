@@ -1,0 +1,43 @@
+{
+  "name": "grok",
+  "version": "0.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "build": "webpack"
+  },
+  "author": "andrew egbert",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "chokidar": "^1.6.1",
+    "escape-latex": "^0.1.3",
+    "express": "^4.14.0",
+    "fetchival": "^0.3.2",
+    "ip": "^1.1.4",
+    "markdown-it": "*",
+    "markdown-it-decorate": "^1.2.1",
+    "markdown-it-highlightjs": "^2.0.0",
+    "markdown-it-katex": "*",
+    "minimist": "^1.2.0",
+    "openurl": "^1.1.1",
+    "path": "^0.12.7",
+    "react": "^15.4.0",
+    "react-addons": "^0.9.1-deprecated",
+    "react-dom": "^15.4.0",
+    "react-select": "^1.0.0-rc.2",
+    "react-textarea-autosize": "^4.0.5",
+    "sections": "^0.1.9",
+    "whatwg-fetch": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-1": "^6.16.0",
+    "webpack": "^1.13.3"
+  }
+}
