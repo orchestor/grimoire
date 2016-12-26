@@ -109,7 +109,7 @@ function compile(topic, item) {
 compile()
 
 function compileFile(fiName) {
-    console.log("recompiling...");
+    //console.log("recompiling...");
     parts = fiName.split("/");
     topic = parts[2];
     item = parts[3];
@@ -127,11 +127,13 @@ function compileFile(fiName) {
             fs.writeFileSync(fiName.replace(".md", "") + String(ii++) + ".html", result);
         })
     }
-    try {
-        grimoire[topic][item]["headings"] = parsedSections["headings"];
-        fs.writeFileSync("./src/grimoire/grimoire.js", "module.exports = " + JSON.stringify(grimoire, null, 2));
-    } catch (e) {
-        console.log("error parsing grimoire topic:", topic);
+    if (topic) {
+        try {
+            grimoire[topic][item]["headings"] = parsedSections["headings"];
+            fs.writeFileSync("./src/grimoire/grimoire.js", "module.exports = " + JSON.stringify(grimoire, null, 2));
+        } catch (e) { // this will happen if topic is undefined.. 
+            console.log("error parsing grimoire topic:", topic);
+        }
     }
 }
 
@@ -309,4 +311,6 @@ var ip = require("ip");
 console.log("ip:", ip.address());
 
 console.log('Listening on port ' + config.express.port);
-require("openurl").open("http://"+ip.address()+":" + String(config.express.port));
+
+/* if you want it to open in the browser (kind of annoying if it's already pinned) */
+//require("openurl").open("http://"+ip.address()+":" + String(config.express.port));

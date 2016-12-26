@@ -1,6 +1,10 @@
 # Grimoire
 
-This is a project I have been working on in private for a couple of months, but I cleaned out my .git folder as it had some private notes in there. Likely open sourcing soon, once I get all the licenses, etc. straightened out. 
+This is a project I have been working on in private for a couple of months, but I cleaned out my .git folder as it had some private notes in there. 
+
+## NOTE: This is a work in progress. 
+
+## NOTE: this is meant to be run locally, not over the interweb (at least without some additional security).  
 
 ## General installation instructions:
 ### install npm and node
