@@ -12,8 +12,8 @@ if (!fs.existsSync(folder)) {
 }
 var file = folder + "/grimoire.js";
 if (!fs.existsSync(file)) {
-    var startQ = {tutorial:{simple:{parts:[], tags:[], interval:0,last:0,gtype:"grimroire"}}};
-    fs.writeFileSync("./src/grimoire/grimoire.js", "module.exports = "+JSON.stringify(startQ));
+    var startQ = { tutorial: { simple: { parts: [], tags: [], interval: 0, last: 0, gtype: "grimroire" } } };
+    fs.writeFileSync("./src/grimoire/grimoire.js", "module.exports = " + JSON.stringify(startQ));
 }
 
 
@@ -122,7 +122,7 @@ function compileFile(fiName) {
     if (doCompileStep) {
         parsedSections.sections.forEach(function(sect) {
             //console.log("sect", sect["body"]);
-            console.log(sect["body"]);
+            //console.log(sect["body"]);
             result = md.render(sect["body"]);
             fs.writeFileSync(fiName.replace(".md", "") + String(ii++) + ".html", result);
         })
@@ -190,7 +190,7 @@ function addEntry(topic, item, gtype) {
         //console.log(grimoire);
         var gString = "module.exports = " + JSON.stringify(grimoire, null, 2)
         fs.writeFileSync("src/grimoire/grimoire.js", gString);
-        console.log(gString);
+        //console.log(gString);
     }
 }
 
@@ -262,9 +262,9 @@ app.post("/incrementGrok", function(req, res, next) {
 
 //we will do this less sketchily once editor is built-in
 app.post("/add", function(req, res, next) {
-    console.log(req.body);
     var topic = req.body.topic;
     var item = req.body.item;
+    console.log("adding ", topic, item);
     var gtype = req.body.gtype;
     addEntry(topic, item, gtype);
     //exec("code ./src/grimoire/" + topic + "/" + item + "/" + item + ".md");
@@ -272,9 +272,10 @@ app.post("/add", function(req, res, next) {
 });
 
 app.post("/edit", function(req, res, next) {
-    console.log(req.body);
     var topic = req.body.topic;
     var item = req.body.item;
+
+    console.log("editing", topic, item);
     var newMarkdown = req.body.newMarkdown;
     updateMarkdown(topic, item, newMarkdown);
     //exec("code ./src/grimoire/" + topic + "/" + item + "/" + item + ".md");
@@ -301,7 +302,14 @@ app.post("/read", function(req, res, next) {
     var topic = req.body.topic;
     var item = req.body.item;
     var fiName = "./src/grimoire/" + topic + "/" + item + "/" + item + ".md";
-    var test = sections.parse(fs.readFileSync(fiName, 'utf8'));
+    try {
+        var test = sections.parse(fs.readFileSync(fiName, 'utf8'));
+    } catch (e) {
+        console.log("error parsing requested topic");
+        var gtype = "grok";
+        addEntry(topic, item, "grok")
+        var test = "# " + topic + " / " + item + "\n";
+    }
     res.send({ markdown: test });
     //addEntry(topic, item);
     //exec("code ./src/grimoire/" + topic + "/" + item + "/" + item + ".md");
