@@ -21,30 +21,30 @@ if (!fs.existsSync(file)) {
 var webpack = require("webpack");
 var webpackConfig = require("./webpack.config.js");
 var compiler = webpack(webpackConfig);
+/*
 compiler.watch({ // watch options:
-    aggregateTimeout: 3000, // wait so long for more changes
+    aggregateTimeout: 1000, // wait so long for more changes
     poll: false // use polling instead of native watchers
         // pass a number to set the polling interval
 }, function(err, stats) {
     // ...
     console.log("err", err);
 });
+*/
 
 var doCompileStep = false; //compile all md to html
 
 
 var app = express();
 
-var chokidar = require('chokidar');
+//var chokidar = require('chokidar');
 
 
-//var sys = require('sys');
 var exec = require('child_process').exec;
 
 
 app.use(express.static(__dirname + '/src'));
 app.use(bodyParser.json({ limit: '10mb' }));
-//app.use(express.bodyParser({ limit: '50mb' }))
 app.listen(config.express.port, '0.0.0.0');
 
 
@@ -58,29 +58,10 @@ function compile(topic, item) {
     console.log("recompiling...");
     var dir = "./src/grimoire";
     var grimoire = require("./src/grimoire/grimoire.js");
-    //console.log("module.exports = " + JSON.stringify(grimoire, null, 2));
-    //make this smarter (else it will take too long to load)
-    //only update if newer than last update ... 
+
     function compileStep(topic, item) {
         grimoire[topic][item]["parts"].forEach(function(part) {
-            //console.log(part);
             var fiName = dir + "/" + topic + "/" + item + "/" + part;
-            //add this back in when you add the static compilation stuff
-            /*
-            var test = fs.readFileSync(fiName + ".md", 'utf8');
-            var parsedSections = sections.parse(test);
-            //console.log("ps", parsedSections);
-            var ii = 0;
-            parsedSections.sections.forEach(function(sect) {
-                //console.log("sect", sect["body"]);
-                result = md.render(sect["body"]);
-                fs.writeFileSync(fiName + String(ii++) + ".html", result);
-            })
-            grimoire[topic][item]["headings"] = parsedSections["headings"];
-            */
-            //result = md.render(test);
-            //fs.writeFileSync(fiName + ".html", result);
-            //console.log(result);
         });
         if (!("gtype" in grimoire[topic][item])) {
             grimoire[topic][item]["gtype"] = "grok";
@@ -105,6 +86,7 @@ function compile(topic, item) {
         compileStep(topic, item);
     }
     fs.writeFileSync("./src/grimoire/grimoire.js", "module.exports = " + JSON.stringify(grimoire, null, 2));
+    compiler.run(function(err, stats) {});
 }
 compile()
 
@@ -137,6 +119,8 @@ function compileFile(fiName) {
     }
 }
 
+//not using the compilation step anymore... 
+/*
 var watcher = chokidar.watch('./src/grimoire/', {
     persistent: true,
     depth: 10
@@ -155,7 +139,8 @@ watcher
             log('File', path, 'has been changed');
         }
     })
-    .on('ready', function() { log('Initial scan complete. Ready for changes.'); })
+    .on('ready', function() { log('Initial scan complete. Ready for changes.'); }) *
+    */
 
 //var test = fs.readFileSync(itemDir + "/" + part + ".md", 'utf8');
 //result = md.render(test);
@@ -190,6 +175,12 @@ function addEntry(topic, item, gtype) {
         //console.log(grimoire);
         var gString = "module.exports = " + JSON.stringify(grimoire, null, 2)
         fs.writeFileSync("src/grimoire/grimoire.js", gString);
+
+
+
+        compiler.run(function(err, stats) {
+            // ...
+        });
         //console.log(gString);
     }
 }
@@ -197,6 +188,12 @@ function addEntry(topic, item, gtype) {
 function updateMarkdown(topic, item, newMarkdown) {
     var folder = "src/grimoire/" + topic + "/" + item
     fs.writeFileSync(folder + "/" + item + ".md", newMarkdown);
+
+
+
+    compiler.run(function(err, stats) {
+        // ...
+    });
 }
 
 function resetGrok(topic, item) {
@@ -207,6 +204,9 @@ function resetGrok(topic, item) {
         grimoire[topic][item]["last"] = Math.floor(Date.now() / 1000) - firstFibInterval - 1;
         var gString = "module.exports = " + JSON.stringify(grimoire, null, 2)
         fs.writeFileSync("src/grimoire/grimoire.js", gString);
+        compiler.run(function(err, stats) {});
+
+
         console.log(gString);
     } catch (e) {
         console.log(e, "fail reset grok");
@@ -220,6 +220,7 @@ function incrementGrok(topic, item) {
         grimoire[topic][item]["last"] = Math.floor(Date.now() / 1000);
         var gString = "module.exports = " + JSON.stringify(grimoire, null, 2)
         fs.writeFileSync("src/grimoire/grimoire.js", gString);
+        compiler.run(function(err, stats) {});
         console.log(gString);
     } catch (e) {
         console.log(e, "fail reset grok");
@@ -232,6 +233,7 @@ function setGtype(topic, item, gtype) {
         grimoire[topic][item]["gtype"] = gtype
         var gString = "module.exports = " + JSON.stringify(grimoire, null, 2)
         fs.writeFileSync("src/grimoire/grimoire.js", gString);
+        compiler.run(function(err, stats) {});
         console.log(gString, gtype);
     } catch (e) {
         console.log(e, "fail reset grok");
@@ -292,7 +294,9 @@ app.post("/addImage", function(req, res, next) {
     var thePath = "./src/grimoire/" + topic + "/" + item + "/";
     fs.writeFile(thePath + fiName, base64Data, 'base64', function(err) {
         console.log(err);
+        compiler.run(function(err, stats) {});
         res.send({ filename: fiName });
+
     });
 });
 

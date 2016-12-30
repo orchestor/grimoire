@@ -119,7 +119,7 @@ class App extends React.Component {
                 location.reload()
             }
             that.setState({loading:true});
-            setTimeout(dr,  5000);
+            setTimeout(dr,  1000);
             
           })
       }
